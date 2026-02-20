@@ -2,7 +2,7 @@
 <html lang="zh-Hant">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
   <title>生日快樂 & 新年快樂</title>
   <style>
     :root {
@@ -74,14 +74,22 @@
       line-height: 1.15;
       font-size: clamp(28px, 6.1vw, 56px);
       color: #fff;
-      -webkit-text-stroke: 3px rgba(0, 255, 102, 0.95);
+      -webkit-text-stroke: 2.6px rgba(0, 255, 102, 0.88);
       text-shadow:
-        0 0 6px rgba(0, 255, 102, 0.75),
-        0 0 14px rgba(0, 255, 102, 0.5),
-        0 0 26px rgba(0, 255, 102, 0.35);
+        0 0 5px rgba(0, 255, 102, 0.55),
+        0 0 12px rgba(0, 255, 102, 0.32),
+        0 2px 5px rgba(0, 0, 0, 0.72);
       filter: drop-shadow(0 10px 18px rgba(0,0,0,0.6));
       pointer-events: none;
       user-select: none;
+      padding: 0 10px;
+      max-width: calc(100vw - 18px);
+    }
+
+    .message .msg-line1,
+    .message .msg-line2 {
+      display: block;
+      white-space: nowrap;
     }
 
     @media (max-width: 520px), (max-height: 740px) {
@@ -105,9 +113,15 @@
 
       .message {
         top: 14px;
-        font-size: clamp(22px, 6.8vw, 38px);
-        -webkit-text-stroke: 2.4px rgba(0, 255, 102, 0.95);
+        font-size: clamp(19px, 6.4vw, 35px);
+        -webkit-text-stroke: 1.3px rgba(0, 255, 102, 0.38);
+        text-shadow:
+          0 0 2px rgba(0, 255, 102, 0.22),
+          0 2px 6px rgba(0, 0, 0, 0.85);
+        filter: drop-shadow(0 8px 14px rgba(0,0,0,0.55));
       }
+
+      
     }
 
     
@@ -302,14 +316,54 @@
       100% { transform: translateX(-50%) rotate(2deg) scale(1.06); opacity: 1; }
     }
 
-    @media (prefers-reduced-motion: reduce) {
-      .flame { animation: none; }
+    /* SVG candle flames (the cake illustration itself) */
+    svg .svg-flame__g {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+      filter: drop-shadow(0 0 10px rgba(255, 210, 90, 0.55));
+      animation: svg-flame-flicker var(--flame-dur, 0.9s) infinite ease-in-out;
+      animation-delay: var(--flame-delay, 0s);
+      will-change: transform, opacity;
     }
+
+    svg .svg-flame__core {
+      transform-box: fill-box;
+      transform-origin: 50% 100%;
+      animation: svg-flame-core var(--flame-dur, 0.9s) infinite ease-in-out;
+      animation-delay: var(--flame-delay, 0s);
+      will-change: transform, opacity;
+    }
+
+    @keyframes svg-flame-flicker {
+      0%   { transform: rotate(-3deg) scale(0.98, 1.02); opacity: 0.92; }
+      35%  { transform: rotate(2deg)  scale(1.03, 0.98); opacity: 1; }
+      70%  { transform: rotate(-4deg) scale(0.96, 1.08); opacity: 0.94; }
+      100% { transform: rotate(3deg)  scale(1.04, 0.99); opacity: 1; }
+    }
+
+    @keyframes svg-flame-core {
+      0%   { transform: scale(0.92, 0.96); opacity: 0.88; }
+      50%  { transform: scale(1.06, 1.10); opacity: 1; }
+      100% { transform: scale(0.95, 1.02); opacity: 0.9; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .flame,
+      svg .svg-flame__g,
+      svg .svg-flame__core {
+        animation: none !important;
+      }
+    }
+
+    
   </style>
 </head>
 <body>
   <div class="stage">
-    <div class="message" role="heading" aria-level="1">祝千薰學姊<br>生日快樂&amp;新年快樂</div>
+    <div class="message" role="heading" aria-level="1">
+      <span class="msg-line1">祝千薰學姊</span>
+      <span class="msg-line2">生日快樂&amp;新年快樂</span>
+    </div>
     <canvas id="fw"></canvas>
 
     <div class="cake-wrap" aria-hidden="true">
@@ -547,59 +601,70 @@
           <path d="M362 96 C361 92 363 89 364 86" fill="none"/>
 
           <!-- flames (closer to each candle; taller candles get lower flames) -->
+          <!-- NOTE: keep translate on an outer <g>, and animate an inner <g> so CSS transform doesn't override SVG translate -->
           <g transform="translate(0 30)">
-            <path d="M240 66
-                     C231 56 235 40 243 32
-                     C252 42 255 56 240 66
-                     Z" fill="#ffd05b"/>
-            <path d="M240 62
-                     C235 55 237 46 241 40
-                     C246 46 248 55 240 62
-                     Z" fill="#ff8a2a" stroke="none"/>
+            <g class="svg-flame__g" style="--flame-dur: 0.88s; --flame-delay: -0.12s;">
+              <path d="M240 66
+                       C231 56 235 40 243 32
+                       C252 42 255 56 240 66
+                       Z" fill="#ffd05b"/>
+              <path class="svg-flame__core" d="M240 62
+                       C235 55 237 46 241 40
+                       C246 46 248 55 240 62
+                       Z" fill="#ff8a2a" stroke="none"/>
+            </g>
           </g>
 
           <g transform="translate(0 27)">
-            <path d="M271 66
-                     C262 56 266 40 274 32
-                     C283 42 286 56 271 66
-                     Z" fill="#ffd05b"/>
-            <path d="M271 62
-                     C266 55 268 46 272 40
-                     C277 46 279 55 271 62
-                     Z" fill="#ff8a2a" stroke="none"/>
+            <g class="svg-flame__g" style="--flame-dur: 0.95s; --flame-delay: -0.31s;">
+              <path d="M271 66
+                       C262 56 266 40 274 32
+                       C283 42 286 56 271 66
+                       Z" fill="#ffd05b"/>
+              <path class="svg-flame__core" d="M271 62
+                       C266 55 268 46 272 40
+                       C277 46 279 55 271 62
+                       Z" fill="#ff8a2a" stroke="none"/>
+            </g>
           </g>
 
           <g transform="translate(0 20)">
-            <path d="M302 59
-                     C293 49 297 33 305 25
-                     C314 35 317 49 302 59
-                     Z" fill="#ffd05b"/>
-            <path d="M302 55
-                     C297 48 299 39 303 33
-                     C308 39 310 48 302 55
-                     Z" fill="#ff8a2a" stroke="none"/>
+            <g class="svg-flame__g" style="--flame-dur: 0.83s; --flame-delay: -0.22s;">
+              <path d="M302 59
+                       C293 49 297 33 305 25
+                       C314 35 317 49 302 59
+                       Z" fill="#ffd05b"/>
+              <path class="svg-flame__core" d="M302 55
+                       C297 48 299 39 303 33
+                       C308 39 310 48 302 55
+                       Z" fill="#ff8a2a" stroke="none"/>
+            </g>
           </g>
 
           <g transform="translate(0 27)">
-            <path d="M333 66
-                     C324 56 328 40 336 32
-                     C345 42 348 56 333 66
-                     Z" fill="#ffd05b"/>
-            <path d="M333 62
-                     C328 55 330 46 334 40
-                     C339 46 341 55 333 62
-                     Z" fill="#ff8a2a" stroke="none"/>
+            <g class="svg-flame__g" style="--flame-dur: 0.92s; --flame-delay: -0.39s;">
+              <path d="M333 66
+                       C324 56 328 40 336 32
+                       C345 42 348 56 333 66
+                       Z" fill="#ffd05b"/>
+              <path class="svg-flame__core" d="M333 62
+                       C328 55 330 46 334 40
+                       C339 46 341 55 333 62
+                       Z" fill="#ff8a2a" stroke="none"/>
+            </g>
           </g>
 
           <g transform="translate(0 30)">
-            <path d="M364 66
-                     C355 56 359 40 367 32
-                     C376 42 379 56 364 66
-                     Z" fill="#ffd05b"/>
-            <path d="M364 62
-                     C359 55 361 46 365 40
-                     C370 46 372 55 364 62
-                     Z" fill="#ff8a2a" stroke="none"/>
+            <g class="svg-flame__g" style="--flame-dur: 0.90s; --flame-delay: -0.27s;">
+              <path d="M364 66
+                       C355 56 359 40 367 32
+                       C376 42 379 56 364 66
+                       Z" fill="#ffd05b"/>
+              <path class="svg-flame__core" d="M364 62
+                       C359 55 361 46 365 40
+                       C370 46 372 55 364 62
+                       Z" fill="#ff8a2a" stroke="none"/>
+            </g>
           </g>
         </g>
 
@@ -607,6 +672,8 @@
       </svg>
     </div>
   </div>
+
+  <audio id="bgm" src="生日快樂.mp3" loop preload="auto" autoplay playsinline></audio>
 
   <script>
     // --- Sprinkles (SVG) ---
@@ -981,6 +1048,118 @@
       }
 
       requestAnimationFrame(loop);
+    })();
+
+    // --- Background music (autoplay only; no UI) ---
+    (function bgmAutoplay() {
+      const audio = document.getElementById('bgm');
+      if (!(audio instanceof HTMLAudioElement)) return;
+
+      async function tryPlayUnmuted() {
+        audio.muted = false;
+        return audio.play();
+      }
+
+      async function tryPlayMuted() {
+        audio.muted = true;
+        try { await audio.play(); } catch { /* ignore */ }
+      }
+
+      window.addEventListener('load', async () => {
+        try {
+          await tryPlayUnmuted();
+        } catch {
+          // Many browsers block unmuted autoplay. Start muted (usually allowed),
+          // then unmute on the first user interaction.
+          await tryPlayMuted();
+
+          // Try to unmute immediately (may succeed in some browsers once playback started)
+          try {
+            audio.muted = false;
+            await audio.play();
+            return;
+          } catch { /* ignore */ }
+
+          // Otherwise unmute on first user interaction.
+          window.addEventListener('pointerdown', async () => {
+            audio.muted = false;
+            try { await audio.play(); } catch { /* ignore */ }
+          }, { once: true, passive: true });
+        }
+      }, { once: true });
+    })();
+
+    // --- Greeting auto-fit + positioning ---
+    (function greetingAutoFit() {
+      const message = document.querySelector('.message');
+      const line2 = message && message.querySelector('.msg-line2');
+      const cakeWrap = document.querySelector('.cake-wrap');
+      if (!message || !line2 || !cakeWrap) return;
+
+      let rafId = 0;
+
+      function fit() {
+        rafId = 0;
+
+        message.style.fontSize = '';
+        message.style.top = '';
+
+        const cakeTop = cakeWrap.getBoundingClientRect().top;
+        if (!Number.isFinite(cakeTop) || cakeTop <= 0) return;
+
+        const cs = getComputedStyle(message);
+        const padX = (parseFloat(cs.paddingLeft) || 0) + (parseFloat(cs.paddingRight) || 0);
+
+        const gap = Math.round(Math.max(14, Math.min(28, window.innerHeight * 0.028)));
+        const minTop = 18;
+
+        const widthLimit = Math.max(0, window.innerWidth - 18 - padX - 4);
+        const heightLimit = Math.max(0, cakeTop - gap - minTop);
+        if (widthLimit <= 0 || heightLimit <= 0) return;
+
+        let lo = 14;
+        let hi = 240;
+        let best = lo;
+
+        while (lo <= hi) {
+          const mid = (lo + hi) >> 1;
+          message.style.fontSize = mid + 'px';
+
+          const w2 = line2.getBoundingClientRect().width;
+          const hMsg = message.getBoundingClientRect().height;
+
+          if (w2 <= widthLimit && hMsg <= heightLimit) {
+            best = mid;
+            lo = mid + 1;
+          } else {
+            hi = mid - 1;
+          }
+        }
+
+        message.style.fontSize = best + 'px';
+
+        const msgH = message.getBoundingClientRect().height;
+        const cakeTop2 = cakeWrap.getBoundingClientRect().top;
+
+        // Place closer to the visual center of the screen, but never below the cake.
+        const desiredCenterTop = (window.innerHeight * 0.40) - (msgH / 2);
+        const topMax = cakeTop2 - gap - msgH;
+        const top = Math.max(minTop, Math.min(desiredCenterTop, topMax));
+        message.style.top = Math.round(top) + 'px';
+      }
+
+      function schedule() {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = requestAnimationFrame(fit);
+      }
+
+      window.addEventListener('resize', schedule, { passive: true });
+      window.addEventListener('load', schedule, { once: true });
+      schedule();
+
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(schedule);
+      }
     })();
   </script>
 </body>
